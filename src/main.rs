@@ -22,20 +22,16 @@ fn main() {
             }
         }
         Some(name) => {
-            let processes = system.processes_by_exact_name(name.as_str());
+            let mut processes = system.processes_by_exact_name(name.as_str()).peekable();
 
-            let mut i = 0;
-            for p in processes {
-                println!("{} {}", p.pid(), p.name());
-                i += 1
-            }
-            if i == 0 {
+            if processes.peek().is_none() {
                 eprintln!("No process found with exact name \"{name}\"");
                 eprintln!("Here are the processes with a similar name :");
-                let processes = system.processes_by_name(name.as_str());
-                for p in processes {
-                    println!("{} {}", p.pid(), p.name());
-                }
+                processes = system.processes_by_name(name.as_str()).peekable();
+            }
+
+            for p in processes {
+                println!("{} {}", p.pid(), p.name());
             }
         }
     }
